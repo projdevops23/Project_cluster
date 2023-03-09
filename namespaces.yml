@@ -1,0 +1,15 @@
+---
+- name: Créer deux namespaces dans Kubernetes
+  hosts: masters
+  become: true
+  gather_facts: no
+  vars:
+    namespaces:
+      - name: pre-prod
+      - name: prod
+
+  tasks:
+  
+    - name: Créer les namespaces
+      shell: kubectl create namespace {{ item.name }}
+      with_items: "{{ namespaces }}"

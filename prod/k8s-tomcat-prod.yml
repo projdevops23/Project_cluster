@@ -1,0 +1,24 @@
+piVersion: v1
+kind: Pod
+metadata:
+  name: tomcat-pod
+  labels:
+    app: tomcat
+spec:
+  containers:
+  - name: tomcat
+    image: tomcat:latest
+    ports:
+    - containerPort: 8080
+    command:
+      - /bin/sh
+      - -c
+      - |
+        apt-get update && \
+        apt-get install -y curl && \
+        curl -O https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.54/bin/apache-tomcat-9.0.54.tar.gz && \
+        tar xvfz apache-tomcat-9.0.54.tar.gz && \
+        rm -f apache-tomcat-9.0.54.tar.gz && \
+        /usr/local/tomcat/bin/startup.sh && \
+        tail -f /usr/local/tomcat/logs/catalina.out
+

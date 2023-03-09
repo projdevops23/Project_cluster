@@ -1,0 +1,19 @@
+---
+- name: Deploy deployments on Kubernetes
+  hosts: masters
+  gather_facts: false
+  become: true
+
+  tasks:
+    # Vérifier si le le deployement existe déjà sur le namespace pre-prod
+    - name: Vérifier l'existence du deployement PostgreSQL
+      shell: sudo kubectl get deployment postgresql -n pre-prod
+      ignore_errors: true
+      register: pod_check_result
+
+    # Créer le deployement PostgreSQL existe déjà sur le namespace pre-prod 
+    - name: Créer le deployement PostgreSQL
+      shell: sudo kubectl create -f /home/trainee/pre-prod/posgresql-pre-prod.yml
+      when: pod_check_result.rc != 0
+
+
