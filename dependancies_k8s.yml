@@ -5,15 +5,53 @@
   become: true
 
   tasks:
+  # ---------------------------------------------Posgresql-----------------------------------------------------------
     # Vérifier si le le deployement existe déjà sur le namespace pre-prod
     - name: Vérifier l'existence du deployement PostgreSQL
       shell: sudo kubectl get deployment postgresql -n pre-prod
       ignore_errors: true
       register: pod_check_result
 
-    # Créer le deployement PostgreSQL existe déjà sur le namespace pre-prod 
+    # Créer le deployement PostgreSQL sur le namespace pre-prod si il n'existe pas
     - name: Créer le deployement PostgreSQL
       shell: sudo kubectl create -f /home/trainee/pre-prod/posgresql-pre-prod.yml
+      when: pod_check_result.rc !=   0
+
+    # Services Posgresql
+
+    # Vérifier si le services pour posgres existe déjà sur le namespace pre-prod
+    - name: Vérifier l'existence du service PostgreSQL
+      shell: sudo kubectl get services postgresql-service -n pre-prod
+      ignore_errors: true
+      register: pod_check_result
+
+    # Créer le service PostgreSQL sur le namespace pre-prod 
+    - name: Créer le service PostgreSQL
+      shell: sudo kubectl create -f /home/trainee/pre-prod/posgres-services-pre-prod.yml -n pre-prod
       when: pod_check_result.rc != 0
 
+# ---------------------------------------------Tomcat-----------------------------------------------------------
+    # Vérifier si le le deployement existe déjà sur le namespace pre-prod
+    - name: Vérifier l'existence du deployement Tomcat
+      shell: sudo kubectl get deployment tomcat-deployment -n pre-prod
+      ignore_errors: true
+      register: pod_check_result
+
+    # Créer le deployement Tomcat sur le namespace pre-prod si il n'existe pas 
+    - name: Créer le deployement Tomcat
+      shell: sudo kubectl create -f /home/trainee/pre-prod/k8s-tomcat-pre-prod.yml
+      when: pod_check_result.rc != 0
+
+    # Services Tomcat
+
+    # Vérifier si le services pour posgres existe déjà sur le namespace pre-prod
+    - name: Vérifier l'existence du service Tomcat
+      shell: sudo kubectl get deployment tomcat-service -n pre-prod
+      ignore_errors: true
+      register: pod_check_result
+
+    # Créer le service Tomcat sur le namespace pre-prod 
+    - name: Créer le service Tomcat
+      shell: sudo kubectl create -f /home/trainee/pre-prod/tomcat-services-pre-prod.yml -n pre-prod
+      when: pod_check_result.rc != 0
 
